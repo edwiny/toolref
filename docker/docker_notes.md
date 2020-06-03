@@ -1,9 +1,9 @@
 # Docker notes
 
-## Basics
+## Images
 
-Images are the filesystem based container. They're readonly (think class)
-container is instance of image. Stateful (think object)
+* **Images** are the filesystem based container. They're readonly (think class)
+* **Container** is instance of image. Stateful (think object)
 
 
 pull image from registry:
@@ -29,20 +29,33 @@ run default command on docker image:
 docker run imagename
 ```
 
-'ssh' into instance:
-
-```
-# get container id
-$ docker ps
-$ docker exec  -it 63e357bf14a0 bash
-```
-
-
 remove image:
 
 ```
 $ docker rmi ImageID
 ```
+
+## Containers
+
+'ssh' into a container:
+
+```
+# get container id
+$ docker container ps
+$ docker container exec  -it 63e357bf14a0 bash
+```
+
+
+
+
+Docker leaves stopped container lying around. To clear them all out:
+
+
+```
+docker container prune
+```
+
+
 
 
 pause vs stop vs kill:
