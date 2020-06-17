@@ -73,3 +73,9 @@ tmux new -s my_session_name
 tmux rename-session -t 0 database
 
 ```
+
+### scolling up through history
+
+```
+C-b [
+```
