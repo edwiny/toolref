@@ -8,6 +8,16 @@ the .[] notation represents the keys (or array indices) to select from the input
 
 
 
+`.["foo"]` is equivalent to `.foo`
+
+The [] notation works as object key lookup as well as array index.
+
+The | takes output of prev filter and feed it as input to next filter.
+
+`.a.b.c` is the same as `.a | .b | .c`.
+
+
+
 ## Get single value 
 
 given input
@@ -30,6 +40,31 @@ returns
 
 ```
 100
+```
+
+
+given input
+
+```
+{
+    "instance": {
+        "aws_status": "available",
+        "name": "blah"
+    }
+}
+```
+
+query:
+
+```
+jq .instance.aws_status
+```
+
+returns
+
+
+```
+"available"
 ```
 
 * Get value from a array of objects
@@ -171,6 +206,13 @@ to return as list without quotes or commas:
 
 ```
 $ cat poollist.json  | jq  -r 'keys | .[]'
+```
+
+## pass arguments into the jq expression
+
+
+```
+jq --arg rds $RDS --arg key $KEY '.[].instances | .[] | select(.dbguid==$rds) | .[$key]'
 ```
 
 
