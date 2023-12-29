@@ -13,6 +13,10 @@ sdk list java | grep installed
 ## Switching to another version
 
 ```
+# make it default across all shells
+sdk default java 17.0.7-tem
+
+# or only current shell
 sdk use java 17.0.7-tem
 ```
 
