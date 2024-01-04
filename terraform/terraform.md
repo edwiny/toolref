@@ -41,4 +41,115 @@ These components also come into play in a team environment.
 
 * Terraform Registry
   * Hashicorp managed public registry
-  * Cloud providers will typically publish modules to capture best practices in using their platforms.
+  * Cloud providers will typically publish modules and providers to capture best practices in using their platforms.
+  
+  
+## Terraform Registry
+
+location: registry.terraform.io
+
+Seeing a provider source like this:
+
+```
+  required_providers {
+    azurerm = {
+      source  = "hashicorp/azurerm"
+      version = "~> 3.0.2"
+    }
+```
+
+`hashicorp/azurerm` translates to `registry.terraform.io/hashicorp/azurerm`
+via Web it's https://registry.terraform.io/providers/hashicorp/azurerm/3.85.0
+
+
+## Terraform DSL 
+
+
+Example conf:
+
+```
+terraform {
+  required_providers {
+    azurerm = {
+      source  = "hashicorp/azurerm"
+      version = "~> 3.0.2"
+    }
+  }
+
+  required_version = ">= 1.1.0"
+}
+```
+The `terraform` block contains general config for Terraform,
+including defining the provider dependencies, whose `source`
+identifies their path on the hashicorp registry (or other registries).
+
+
+```
+provider "azurerm" {
+  features {}
+}
+```
+Configures the provider. Can have multiple providers.
+
+
+```
+resource "azurerm_resource_group" "rg" {
+  name     = "myTFResourceGroup"
+  location = "australiaeast"
+}
+```
+
+Configures the components of the infrastructure.
+
+The string after resource is the id and has the syntax
+
+`"{PROVIDER}_{TYPE}" "{NAME"`
+
+The id of the resource block in this example is `azurerm_resource_group.rg`
+
+The rest of the block contains arguments as defined by the provider.
+The documentation can be looked up on the registry.
+
+
+
+## Typical TF editing loop
+
+```
+terraform init     # do this once
+
+terraform fmt      # style formatting + syntax validation
+
+# alternatively
+terraform validate
+
+# deploy
+
+terraform apply
+```
+
+`apply` will produce a local state file with the ids of the created resources.
+You can view the state with `terraform state list`
+
+
+
+
+
+
+  
+## Terraform on Azure
+
+IF not done already, create a Service Principal for the cli:
+
+```
+az ad sp create-for-rbac --role="Contributor" --scopes="/subscriptions/<SUBSCRIPTION_ID>"
+```
+
+From the output, create the following file and call it creds.ps1. Note: do not give it extension .env
+
+```
+$Env:ARM_CLIENT_ID = "<APPID_VALUE>"
+$Env:ARM_CLIENT_SECRET = "<PASSWORD_VALUE>"
+$Env:ARM_SUBSCRIPTION_ID = "<SUBSCRIPTION_ID>"
+$Env:ARM_TENANT_ID = "<TENANT_VALUE>"
+```
+
