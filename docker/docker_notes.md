@@ -96,7 +96,21 @@ Syntax has two forms:
 * RUN ["executable","param1","param2"] (exec form)
 * RUN command param1 param2 (shell form)
 
+### CMD and ENTRYPOINT
 
+Careful, there a many foot shooting opportunities here.
+Read the official Docker docs carefully.
+
+
+**ENTRYPOINT**:
+* supplies the default command to run when container is started
+* can also include required arguments the command.
+
+**CMD**:
+* provides default arguments to ENTRYPOINT command (they're concatenated) but gets completely replaced by any args specified at runtime.
+
+See:
+https://docs.docker.com/reference/dockerfile/#understand-how-cmd-and-entrypoint-interact
 
 
 
@@ -164,6 +178,13 @@ https://github.com/docker-library
 * stretch, jessie - mediam (200MB), older/stable debian, apt, glibc
 * buster, bullseye - medium (200MB), newer debiam, apt, glibc
 
+## Gotchas
+
+* Filesystem permissions: container and host has different ids for users, groups.o
+* `sh -c <CMD>` - passing args does not work as expected:
+   * Should be something like `sh -c 'CMD $@' PROGNAME ARG1 ARG2'`
+   * PROGNAME becomes $0 and is not really useful
+   
 
 
 ## Docker best practices
@@ -227,3 +248,25 @@ EXPOSE 8080/tcp
 ```
 
 
+## Using Docker to package up shell scripts or commands
+
+Script should start with:
+
+```
+#!/bin/sh
+```
+
+
+In Dockerfile, ensure execute permissions:
+
+```
+FROM <BASE_IMAGE>
+
+COPY src/ /opt/app/
+RUN chmod 755 /opt/app/*.sh
+ENV PATH="${PATH}:/opt/app"
+ENTRYPOINT [ "myscript.sh" ]
+
+```
+
+**WARN** careful not to use `sh -c` as entrypoint as it is tricky to pass in args at runtime to the script being executud.

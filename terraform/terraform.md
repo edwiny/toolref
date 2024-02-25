@@ -131,7 +131,20 @@ terraform apply
 You can view the state with `terraform state list`
 
 
+## Terraform state
 
+State file gets created when Terraform applies config to providers, or when doing a refresh.
+
+Generally there is a 1:1 mapping between logical objects in the state and physical copmonents.
+
+You can perform mutating actions on the state but using the `terraform state` command. Do not edit the JSON
+directly. 
+
+Typical actions:
+* import components created outside of Terraform
+* forget objects that you want to move out of Terraform control.
+
+To integrate against this statefile, do not parse directly but instead run `terraform output -json` or `terraform show -json` instead.
 
 
 
